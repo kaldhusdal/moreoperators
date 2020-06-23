@@ -46,32 +46,64 @@ setMethod(
   signature(x = "numeric"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (!is.numeric(y)) stop("The class of 'y' must suit that of 'x'.")
+    if (!all(is.numeric(y))) y <- as.numeric(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x <= y[2])
   }
 )
+
+#tests
+#5 %[]% c(5, 7)
+#5 %[]% (Sys.Date() + c(0, 1))
+#5 %[]% (Sys.time() + c(0, 1))
+#5 %[]% c(NA, 7)
+#5 %[]% c(5, NA)
+#5 %[]% c("A", "Z")
+
 
 setMethod(
   "%[]%",
   signature(x = "POSIXct"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.POSIXct), silent = TRUE), "try-error")) stop("The class of 'y' must suit that of 'x'.")
+    if (inherits(y, "Date")) {
+      y <- as.POSIXct(paste(as.character(y), c("00:00:00", "23:59:59")))
+    }
     if (!inherits(y, "POSIXct")) y <- as.POSIXct(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x <= y[2])
   }
 )
+
+#tests
+#Sys.time() %[]% c(1, 10) #Error in as.POSIXct.numeric(y) : 'origin' must be supplied
+#Sys.time() %[]% rep(Sys.Date(), 2)
+#Sys.time() %[]% (Sys.Date() + c(-1, 1))
+#Sys.time() %[]% (Sys.time() + c(-1, 1))
+#Sys.time() %[]% c(Sys.time(), NA)
+#Sys.time() %[]% c(NA, Sys.time())
+#Sys.time() %[]% c("A", "Z")
 
 setMethod(
   "%[]%",
   signature(x = "Date"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.Date), silent = TRUE), "try-error")) stop("The class of 'y' must suit that of 'x'.")
     if (!inherits(y, "Date")) y <- as.Date(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x <= y[2])
   }
 )
+
+#tests
+#Sys.Date() %[]% c(1, 10) #Error in as.Date.numeric(y) : 'origin' must be supplied
+#Sys.Date() %[]% rep(Sys.time(), 2)
+#Sys.Date() %[]% (Sys.time() + c(-1, 1))
+#Sys.Date() %[]% (Sys.Date() + c(-1, 1))
+#Sys.Date() %[]% c(Sys.Date(), NA)
+#Sys.Date() %[]% c(NA, Sys.Date())
+#Sys.Date() %[]% c("A", "Z")
+
 
 #' @rdname interval_operators
 #' @export
@@ -82,7 +114,8 @@ setMethod(
   signature(x = "numeric"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (!is.numeric(y)) stop("The class of 'y' must suit that of 'x'.")
+    if (!all(is.numeric(y))) y <- as.numeric(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x < y[2])
   }
 )
@@ -92,8 +125,11 @@ setMethod(
   signature(x = "POSIXct"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.POSIXct), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
+    if (inherits(y, "Date")) {
+      y <- as.POSIXct(paste(as.character(y), c("00:00:00", "23:59:59")))
+    }
     if (!inherits(y, "POSIXct")) y <- as.POSIXct(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x < y[2])
   }
 )
@@ -103,8 +139,8 @@ setMethod(
   signature(x = "Date"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.Date), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
     if (!inherits(y, "Date")) y <- as.Date(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x < y[2])
   }
 )
@@ -119,7 +155,8 @@ setMethod(
   signature(x = "numeric"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (!is.numeric(y)) stop("The class of 'y' must suit that of 'x'.")
+    if (!all(is.numeric(y))) y <- as.numeric(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x <= y[2])
   }
 )
@@ -129,8 +166,11 @@ setMethod(
   signature(x = "POSIXct"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.POSIXct), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
+    if (inherits(y, "Date")) {
+      y <- as.POSIXct(paste(as.character(y), c("00:00:00", "23:59:59")))
+    }
     if (!inherits(y, "POSIXct")) y <- as.POSIXct(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x <= y[2])
   }
 )
@@ -140,8 +180,8 @@ setMethod(
   signature(x = "Date"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.Date), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
     if (!inherits(y, "Date")) y <- as.Date(y)
+    if (any(is.na(y))) return(NA)
     (x > y[1]) & (x <= y[2])
   }
 )
@@ -156,7 +196,8 @@ setMethod(
   signature(x = "numeric"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (!is.numeric(y)) stop()
+    if (!all(is.numeric(y))) y <- as.numeric(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x < y[2])
   }
 )
@@ -166,8 +207,11 @@ setMethod(
   signature(x = "POSIXct"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.POSIXct), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
+    if (inherits(y, "Date")) {
+      y <- as.POSIXct(paste(as.character(y), c("00:00:00", "23:59:59")))
+    }
     if (!inherits(y, "POSIXct")) y <- as.POSIXct(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x < y[2])
   }
 )
@@ -177,8 +221,8 @@ setMethod(
   signature(x = "Date"),
   function (x, y) {
     if (length(y) != 2) stop("'y' must have length 2.")
-    if (inherits(try(sapply(y, as.Date), silent = TRUE), "try-error")) stop("The class of 'y' must be coercable to that of 'x'.")
     if (!inherits(y, "Date")) y <- as.Date(y)
+    if (any(is.na(y))) return(NA)
     (x >= y[1]) & (x < y[2])
   }
 )
