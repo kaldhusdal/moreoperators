@@ -1,4 +1,4 @@
-Package: operators
+Package: moreoperators
 Title: A collection of operators
 Version: 0.1
 Authors@R: person("Arne", "Kaldhusdal", email = "arne.kaldhusdal@gmail.com", role = c("aut", "cre"))
